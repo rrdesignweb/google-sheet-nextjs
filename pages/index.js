@@ -14,11 +14,14 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 
 //Constants
-import { selectOptions } from "../helpers/constants";
+import {
+  firestore,
+  convertRubbishCollectionSnapshotToMap,
+} from "../helpers/firebase";
 
 export default function Home() {
   const [status, setStatus] = useState(null);
-  const [categoryOptions, setCategoryOptions] = useState(selectOptions); //init state
+  const [categoryOptions, setCategoryOptions] = useState(); //init state
   const [subcategoryOptions, setSubCategoryOptions] = useState(null);
   const [brandOptions, setBrandOptions] = useState(null);
 
@@ -35,6 +38,17 @@ export default function Home() {
     },
   });
 
+  useEffect(() => {
+    const rubbishCollectionRef = firestore.collection("rubbish");
+    rubbishCollectionRef.onSnapshot(async (snapshot) => {
+      const rubbishKeys = convertRubbishCollectionSnapshotToMap(snapshot);
+      const rubbishObjToMap = Object.keys(rubbishKeys).map(
+        (key) => rubbishKeys[key]
+      );
+      setCategoryOptions(rubbishObjToMap);
+    });
+  }, []);
+
   function submitHandler(data) {
     console.log("data", data);
     axios({
@@ -50,7 +64,7 @@ export default function Home() {
       setStatus("Geolocation is not supported by your browser");
     } else {
       setStatus("Locating...");
-      navigator.geolocation.watchPosition(
+      navigator.geolocation.getCurrentPosition(
         (position) => {
           setStatus(null);
           setValue("longitude", position.coords.longitude);
@@ -65,17 +79,17 @@ export default function Home() {
 
   const handleCategoryOnChange = (e) => {
     const { value } = e.target;
-    let subCats,
-      brands = [];
+    let subCat,
+      brand = [];
 
     categoryOptions.map((obj) => {
-      if (obj.category === value) {
-        subCats = [...obj.subcategory];
-        brands = [...obj.brands];
+      if (obj.Category === value) {
+        subCat = [...obj.Subcategory];
+        brand = [...obj.Brand];
       }
     });
-    setBrandOptions(brands);
-    setSubCategoryOptions(subCats);
+    setBrandOptions(brand);
+    setSubCategoryOptions(subCat);
   };
 
   return (
@@ -101,8 +115,8 @@ export default function Home() {
                 {categoryOptions &&
                   categoryOptions.map((opt, idx) => {
                     return (
-                      <option key={idx} value={opt.category}>
-                        {opt.category}
+                      <option key={idx} value={opt.Category}>
+                        {opt.Category}
                       </option>
                     );
                   })}
