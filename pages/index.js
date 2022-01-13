@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import { dayOfWeek, dateDDMMYYYY, timeHHMM } from "../helpers/constants";
 
 //Constants
 import {
@@ -50,11 +51,22 @@ export default function Home() {
   }, []);
 
   function submitHandler(data) {
-    console.log("data", data);
+    let day = dayOfWeek;
+    let time = timeHHMM();
+    let date = dateDDMMYYYY();
+
+    let newData = {
+      ...data,
+      day,
+      date,
+      time,
+    };
+
+    console.log("data", newData);
     axios({
       method: "post",
       url: "/api/sheet",
-      data: data,
+      data: newData,
     });
     reset(); // clears the input on submitting
   }
@@ -130,7 +142,7 @@ export default function Home() {
                 variant="filled"
                 disabled={!subcategoryOptions ? true : false}
                 mt={3}
-                {...register("subcategory", { required: "Select Subcategory" })}
+                {...register("subcategory")}
               >
                 {subcategoryOptions !== null &&
                   subcategoryOptions.map((opt, idx) => {
@@ -141,16 +153,16 @@ export default function Home() {
                     );
                   })}
               </Select>
-              <p className="error-text">
+              {/* <p className="error-text">
                 {errors.subcategory && errors.subcategory.message}
-              </p>
+              </p> */}
 
               <Select
                 placeholder="Brand"
                 variant="filled"
                 disabled={!brandOptions ? true : false}
                 mt={3}
-                {...register("brand", { required: "Select Brand" })}
+                {...register("brand")}
               >
                 {brandOptions !== null &&
                   brandOptions.map((opt, idx) => {
@@ -161,9 +173,9 @@ export default function Home() {
                     );
                   })}
               </Select>
-              <p className="error-text">
+              {/* <p className="error-text">
                 {errors.brand && errors.brand.message}
-              </p>
+              </p> */}
 
               <Input
                 placeholder="Other Info"

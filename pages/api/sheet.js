@@ -1,12 +1,19 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { google } from "googleapis";
-import { dateDDMMYYYY, timeHHMM, dayOfWeek } from "../../helpers/constants";
 
 async function handler(req, res) {
-  console.log("entered");
   if (req.method === "POST") {
-    const { category, subcategory, brand, other, latitude, longitude } =
-      req.body;
+    const {
+      day,
+      date,
+      time,
+      category,
+      subcategory,
+      brand,
+      other,
+      latitude,
+      longitude,
+    } = req.body;
 
     const auth = new google.auth.GoogleAuth({
       credentials: {
@@ -33,9 +40,9 @@ async function handler(req, res) {
       requestBody: {
         values: [
           [
-            dayOfWeek,
-            dateDDMMYYYY,
-            timeHHMM,
+            day,
+            date,
+            time,
             category,
             subcategory,
             brand,

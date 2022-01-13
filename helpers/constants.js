@@ -8,18 +8,21 @@ export const day = {
   6: "Saturday",
 };
 
-export const dateDDMMYYYY = new Date()
-  .toLocaleString("en-AU", {
-    timeZone: "Australia/Melbourne",
-  })
-  .split(", ")[0];
+export const dateDDMMYYYY = () => {
+  return new Date()
+    .toLocaleString("en-AU", {
+      timeZone: "Australia/Melbourne",
+    })
+    .split(", ")[0];
+};
 
-export const timeHHMM = new Date().toLocaleString("en-AU", {
-  timeZone: "Australia/Melbourne",
-  hour12: false,
-  timeStyle: "short",
-});
+export const timeHHMM = () => {
+  return new Date().toLocaleString("en-AU", {
+    timeZone: "Australia/Melbourne",
+    hour12: false,
+    timeStyle: "short",
+  });
+};
 
 const dayId = new Date().getDay();
 export const dayOfWeek = day[dayId];
-
